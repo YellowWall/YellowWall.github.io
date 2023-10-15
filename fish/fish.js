@@ -11,11 +11,10 @@ const NumFins = 3;
 var size = 1.0;
 var NumFish = 10;
 var wall = 10 - size * 0.3;
-var nearGroupRad = 20.0;
+var nearGroupRad = 5.0;
 var separation = 4.0;
 var alignment = 3.0;
 var cohesion = 2.0;
-var wireframe = false;
 var zView = 25.0;
 var globalSpeed = 1;
 //data input
@@ -23,7 +22,6 @@ var globalSpeed = 1;
 const sizeInput = document.querySelector("#fishSize");
 const radInput = document.querySelector("#radius");
 const speedInput = document.querySelector("#fishSpeed");
-const wireInput = document.querySelector("#wireframe");
 const sepInput = document.querySelector("#separation");
 const alignInput = document.querySelector("#alignment");
 const cohesionInput = document.querySelector("#cohesion");
@@ -32,7 +30,6 @@ const numInput = document.querySelector("#NumFish");
 sizeInput.addEventListener("input", updateValue);
 radInput.addEventListener("input", updateValue);
 speedInput.addEventListener("input", updateValue);
-wireInput.addEventListener("input", updateValue);
 sepInput.addEventListener("input", updateValue);
 alignInput.addEventListener("input", updateValue);
 cohesionInput.addEventListener("input", updateValue);
@@ -50,9 +47,6 @@ function updateValue(e){
             break;
         case "fishSpeed":
             globalSpeed = e.target.value;
-            break;
-        case "wireframe":
-            wireframe = !wireframe;
             break;
         case "separation":
             separation = e.target.value;
@@ -86,6 +80,9 @@ var fishDirection = new Array(300).fill(null).map(() =>{
         Math.random() * 0.1 - 0.05
     )
 });
+var oldFishDirection = new Array(300).fill(null).map(()=>{
+    return vec3(0,0,0);
+})
 var fishSpeed = new Array(300).fill(null).map(() =>{
     return Math.random() * 0.1 + 0.05;
     
@@ -257,22 +254,22 @@ function flocking(id){
 
         if(dist <= nearGroupRad){
             neighbors++;
-            revAvg = add(revAvg,scale(dist,add(fishLocation[i],negate(location))));
-            directionAverage = add(directionAverage,fishDirection[i]);
+            revAvg = add(revAvg,scale((nearGroupRad - dist),add(fishLocation[i],negate(location))));
+            directionAverage = add(directionAverage,oldFishDirection[i]);
             positionAverage = add(positionAverage,fishLocation[i]);
         }
     }
     if(neighbors === 0) return;
     
     //aðskilnaður
-    revAvg = revAvg.map((v) => v/neighbors);
+    revAvg = revAvg.map((v) => v / neighbors);
     revAvg = negate(revAvg);
 
     //beining
-    directionAverage = directionAverage.map((v) => v/neighbors);
+    directionAverage = directionAverage.map((v) => v / neighbors);
 
     //samheldni
-    positionAverage = positionAverage.map((v)=> v/neighbors);
+    positionAverage = positionAverage.map((v)=> v / neighbors);
     positionAverage = add (positionAverage,negate(location));
     var [x,y,z] = positionAverage;
     var posMag = Math.sqrt(x*x+y*y+z*z);
@@ -280,22 +277,18 @@ function flocking(id){
         positionAverage = positionAverage.map((v)=> v/posMag);
     }
     const flockVector = vec3(
-        (separation * revAvg[0]) + (alignment*directionAverage[0])+(cohesion*positionAverage[0]),
-        (separation * revAvg[1]) + (alignment*directionAverage[1])+(cohesion*positionAverage[1]),
-        (separation * revAvg[2]) + (alignment*directionAverage[2])+(cohesion*positionAverage[2])
+        (50*separation * revAvg[0]) + (50*alignment*directionAverage[0])+(50*cohesion*positionAverage[0]),
+        (50*separation * revAvg[1]) + (50*alignment*directionAverage[1])+(50*cohesion*positionAverage[1]),
+        (50*separation * revAvg[2]) + (50*alignment*directionAverage[2])+(50*cohesion*positionAverage[2])
 
     );
-    
-    fishDirection[i] = normalize(
-        add(flockVector, fishDirection[i])
-        );
+
+    fishDirection[i] = normalize(add(flockVector, fishDirection[i]));
     return true;
 }
 
 function moveFish(i){
-    if(i<0||i>=NumFish){
-        return;
-    }
+    flocking(i);
     for(var k = 0; k<3;k++){
         if(fishLocation[i][k]>=wall||fishLocation[i][k]<= -wall){
             fishLocation[i] = vec3(-fishLocation[i][0],-fishLocation[i][1],-fishLocation[i][2]);
@@ -306,19 +299,19 @@ function moveFish(i){
     fishLocation[i] = add(
         fishLocation[i],
         scale((globalSpeed *fishSpeed[i]),
-            fishDirection[i]) 
+            normalize(fishDirection[i])) 
             );
     const [xd, yd, zd]  =normalize(fishDirection[i]);
     const zxAngle = degrees(Math.atan2(zd,xd));
     var mv = mat4();
     mv = mult(mv,translate(fishLocation[i]));
     mv = mult(mv, rotateY(-zxAngle));
-    mv = mult(mv, scalem(vec3(size,size,size)))
+    mv = mult(mv, scalem(vec3(size,size,size)));
     return mv;
 };
 function drawFish(i,mv, gl){
-    flocking(i);
     mv = mult(mv,moveFish(i));
+
 
     //snúum hala
     fishTail[i] += tailOffset[i];
@@ -328,11 +321,8 @@ function drawFish(i,mv, gl){
     // Teikna l�kama fisks (�n sn�nings)
     gl.uniform4fv( colorLoc, vec4(fishColor[i][0],fishColor[i][1],fishColor[i][2],1.0));
     gl.uniformMatrix4fv(mvLoc, false, flatten(mv));
-    if(wireframe){
-        gl.drawArrays(gl.LINE_LOOP, 0, NumBody)
-    }else{
-        gl.drawArrays( gl.TRIANGLES, 0, NumBody ); 
-    }
+    gl.drawArrays( gl.TRIANGLES, 0, NumBody ); 
+    
     
     // Teikna spor� og sn�a honum
     var tailMv = mult(mv, translate(vec3(-0.5,0.0,0.0)));
@@ -376,7 +366,7 @@ function render()
         );
     mv = mult( mv, rotateX(spinX) );
     mv = mult( mv, rotateY(spinY) );
-    
+    oldFishDirection = fishDirection;
     for(var i = 0; i<NumFish;i++){
         drawFish(i,mv,gl)
     }
