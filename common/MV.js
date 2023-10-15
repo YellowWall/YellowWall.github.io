@@ -20,6 +20,23 @@ function radians( degrees ) {
     return degrees * Math.PI / 180.0;
 }
 
+function degrees(rads) {
+    return (rads * 180.0) / Math.PI;
+  };
+
+function distance(u, v) {
+  if (u.type != v.type) {
+    throw "distance(): vectors are not the same dimension";
+  }
+
+  let sum = 0.0;
+
+  for (let i = 0; i < u.length; ++i) {
+    sum += Math.pow(u[i] - v[i], 2);
+  }
+  return Math.sqrt(sum);
+}  
+
 //----------------------------------------------------------------------------
 //
 //  Vector Constructors

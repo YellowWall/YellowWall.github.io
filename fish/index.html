@@ -1,0 +1,111 @@
+<html>
+
+<script id="vertex-shader" type="x-shader/x-vertex">
+
+attribute  vec4 vPosition;
+
+uniform mat4 projection;
+uniform mat4 modelview;
+
+void main() 
+{
+    gl_PointSize = 4.5;
+    gl_Position = projection * modelview * vPosition;
+} 
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+
+precision mediump float;
+   
+uniform vec4 fColor;
+
+void
+main()
+{
+    gl_FragColor = fColor;
+}
+</script>
+
+<div class="flex column">
+    <input type="range" min="1" max="300" bind:value={NumFish} id="NumFish" />
+    <label for="NumFish">:Number of fish</label>
+
+    <input
+      type="range"
+      min="0.25"
+      max="5"
+      step="0.25"
+      bind:value={fishSize}
+      id="fishSize"
+    />
+    <label for="fishSize">:Fish size</label>
+    
+    <input
+      type="range"
+      min="1"
+      max="50"
+      step="0.25"
+      bind:value={radius}
+      id="radius"
+    />
+    <label for="radius">:Detection radius</label>
+
+    <input
+      type="range"
+      min="0.0"
+      max="2"
+      step="0.1"
+      bind:value={fishSpeed}
+      id="fishSpeed"
+    />
+    <label for="fishSpeed">Fish speed</label>
+
+    <input id="wireframe" type="checkbox" bind:checked={wireframe} />
+    <label for="wireframe">:wireframe fish</label>
+
+    <input
+      type="range"
+      min="0"
+      max="50"
+      bind:value={separation}
+      step="0.25"
+      id="separation"
+    />
+    <label for="separation">:Seperation strength</label>
+
+    <input
+      type="range"
+      min="0"
+      max="50"
+      bind:value={alignment}
+      step="0.25"
+      id="alignment"
+    />
+    <label for="alignment">:Alignment strength</label>
+
+    <input
+      type="range"
+      min="0"
+      max="50"
+      bind:value={cohesion}
+      step="0.25"
+      id="cohesion"
+    />
+    <label for="cohesion">:Cohesion strength</label>
+</div>
+
+<script type="text/javascript" src="../common/webgl-utils.js"></script>
+<script type="text/javascript" src="../common/initShaders.js"></script>
+<script type="text/javascript" src="../common/MV.js"></script>
+<script type="text/javascript" src="fish.js"></script>
+
+<body>
+<canvas id="gl-canvas" width="500"" height="500">
+Oops ... your browser doesn't support the HTML5 canvas element
+</canvas>
+   
+<br/>
+
+</body>
+</html>
