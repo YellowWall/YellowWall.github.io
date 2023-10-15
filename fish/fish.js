@@ -9,9 +9,9 @@ const NumFins = 3;
 
 //settings
 var size = 1.0;
-var NumFish = 10;
+var NumFish = 50;
 var wall = 10 - size * 0.3;
-var nearGroupRad = 5.0;
+var nearGroupRad = 2.5;
 var separation = 4.0;
 var alignment = 3.0;
 var cohesion = 2.0;
@@ -73,6 +73,9 @@ var fishLocation = new Array(300).fill(null).map(() =>{
         Math.random() * 18 - 9
     )
 });
+var oldFishLocation = new Array(300).fill(null).map(()=>{
+    return vec3(0,0,0);
+})
 var fishDirection = new Array(300).fill(null).map(() =>{
     return vec3(
         Math.random() * 0.1 - 0.05,
@@ -250,13 +253,13 @@ function flocking(id){
         if(i===id){
             continue;
         }
-        var dist = distance(location,fishLocation[i])
+        var dist = distance(location,oldFishLocation[i])
 
         if(dist <= nearGroupRad){
             neighbors++;
-            revAvg = add(revAvg,scale((nearGroupRad - dist),add(fishLocation[i],negate(location))));
+            revAvg = add(revAvg,scale((nearGroupRad - dist),add(oldFishLocation[i],negate(location))));
             directionAverage = add(directionAverage,oldFishDirection[i]);
-            positionAverage = add(positionAverage,fishLocation[i]);
+            positionAverage = add(positionAverage,oldFishLocation[i]);
         }
     }
     if(neighbors === 0) return;
@@ -277,13 +280,12 @@ function flocking(id){
         positionAverage = positionAverage.map((v)=> v/posMag);
     }
     const flockVector = vec3(
-        (50*separation * revAvg[0]) + (50*alignment*directionAverage[0])+(50*cohesion*positionAverage[0]),
-        (50*separation * revAvg[1]) + (50*alignment*directionAverage[1])+(50*cohesion*positionAverage[1]),
-        (50*separation * revAvg[2]) + (50*alignment*directionAverage[2])+(50*cohesion*positionAverage[2])
+        (separation * revAvg[0]) + (alignment*directionAverage[0])+(cohesion*positionAverage[0]),
+        (separation * revAvg[1]) + (alignment*directionAverage[1])+(cohesion*positionAverage[1]),
+        (separation * revAvg[2]) + (alignment*directionAverage[2])+(cohesion*positionAverage[2])
 
     );
-
-    fishDirection[i] = normalize(add(flockVector, fishDirection[i]));
+    fishDirection[id] = normalize(add(flockVector, fishDirection[id]));
     return true;
 }
 
@@ -367,6 +369,7 @@ function render()
     mv = mult( mv, rotateX(spinX) );
     mv = mult( mv, rotateY(spinY) );
     oldFishDirection = fishDirection;
+    oldFishLocation = fishLocation;
     for(var i = 0; i<NumFish;i++){
         drawFish(i,mv,gl)
     }
