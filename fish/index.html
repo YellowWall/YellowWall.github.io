@@ -28,7 +28,7 @@ main()
 </script>
 
 <div class="flex column">
-    <input type="range" min="1" max="300" bind:value={NumFish} id="NumFish" />
+    <input type="range" min="1" max="299" id="NumFish" />
     <label for="NumFish">:Number of fish</label>
 
     <input
@@ -36,7 +36,6 @@ main()
       min="0.25"
       max="5"
       step="0.25"
-      bind:value={fishSize}
       id="fishSize"
     />
     <label for="fishSize">:Fish size</label>
@@ -46,7 +45,6 @@ main()
       min="1"
       max="50"
       step="0.25"
-      bind:value={radius}
       id="radius"
     />
     <label for="radius">:Detection radius</label>
@@ -61,14 +59,13 @@ main()
     />
     <label for="fishSpeed">Fish speed</label>
 
-    <input id="wireframe" type="checkbox" bind:checked={wireframe} />
+    <input id="wireframe" type="checkbox"  />
     <label for="wireframe">:wireframe fish</label>
 
     <input
       type="range"
       min="0"
       max="50"
-      bind:value={separation}
       step="0.25"
       id="separation"
     />
@@ -78,7 +75,6 @@ main()
       type="range"
       min="0"
       max="50"
-      bind:value={alignment}
       step="0.25"
       id="alignment"
     />
@@ -88,7 +84,6 @@ main()
       type="range"
       min="0"
       max="50"
-      bind:value={cohesion}
       step="0.25"
       id="cohesion"
     />

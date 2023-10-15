@@ -87,7 +87,7 @@ var fishDirection = new Array(300).fill(null).map(() =>{
     )
 });
 var fishSpeed = new Array(300).fill(null).map(() =>{
-    return Math.random() * 0.2 + 0.1;
+    return Math.random() * 0.1 + 0.05;
     
 });
 var fishTail = new Array(300).fill(null).map(() =>{
@@ -289,7 +289,6 @@ function flocking(id){
     fishDirection[i] = normalize(
         add(flockVector, fishDirection[i])
         );
-    fishDirection[i] = vec3(fishDirection[i][0]/2,fishDirection[i][1]/2,fishDirection[i][2]/2);
     return true;
 }
 
