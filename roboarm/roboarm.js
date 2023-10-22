@@ -214,10 +214,10 @@ window.onload = function init() {
 			    theta[2] = Math.max(-170, theta[2]-5);
                 break;
             case 69:
-                theta[3] = Math.min(90,theta[3]+5);
+                theta[3] = Math.min(120,theta[3]+5);
                 break;
             case 82:
-                theta[3] = Math.max(-90,theta[3]-5);
+                theta[3] = Math.max(-120,theta[3]-5);
                 break;
          }
      }  );  
