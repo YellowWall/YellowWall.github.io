@@ -17,6 +17,8 @@ var alignment = 3.0;
 var cohesion = 2.0;
 var zView = 25.0;
 var globalSpeed = 1;
+
+
 //data input
 
 const sizeInput = document.querySelector("#fishSize");
@@ -146,7 +148,10 @@ const box =[
     vec4(10, 10, -10, 1.0)
 ];
 
-
+//movement
+let player_dir = 0;
+let player_pos = vec3(0,0,0);
+let start_x = 0;
 var movement = false;     // Er m�sarhnappur ni�ri?
 var spinX = 0;
 var spinY = 0;
@@ -205,8 +210,9 @@ window.onload = function init()
     // Atbur�af�ll fyrir m�s
     canvas.addEventListener("mousedown", function(e){
         movement = true;
-        origX = e.offsetX;
-        origY = e.offsetY;
+        start_x = e.clientX;
+        /*origX = e.offsetX;
+        origY = e.offsetY;*/
         e.preventDefault();         // Disable drag and drop
     } );
 
@@ -216,22 +222,30 @@ window.onload = function init()
 
     canvas.addEventListener("mousemove", function(e){
         if(movement) {
+            player_dir += 0.4*(start_x - e.clientX)
+            player_dir %= 360.0;
+            start_x = e.clientX;
+            /*
     	    spinY += (e.offsetX - origX) % 360;
             spinX += (e.offsetY - origY) % 360;
             origX = e.offsetX;
-            origY = e.offsetY;
+            origY = e.offsetY;*/
         }
     } );
     
     // Atbur�afall fyrir lyklabor�
      window.addEventListener("keydown", function(e){
-         switch( e.keyCode ) {
+         /*switch( e.keyCode ) {
             case 38:	// upp �r
                 zView += 0.2;
                 break;
             case 40:	// ni�ur �r
                 zView -= 0.2;
                 break;
+         }*/
+         var movement = mouseLook(e.key,player_dir);
+         if(movement != null){
+            player_pos = add(player_pos,movement);
          }
      }  );  
 
@@ -241,6 +255,17 @@ window.onload = function init()
      }  );  
 
     render();
+}
+function look(p_dir){
+    const player_x = Math.cos(radians(p_dir));
+    const player_y = Math.sin(radians(p_dir));
+
+    const [x,y,z] = player_pos;
+    return lookAt(
+        vec3(x,0.5,z),
+        vec3(x  + player_x, 0.5,z+player_y),
+        vec3(0.0,1.0,0.0)
+        );
 }
 
 function flocking(id){
@@ -361,11 +386,8 @@ function render()
     gl.bindBuffer(gl.ARRAY_BUFFER,vBuffer);
     gl.vertexAttribPointer(vPosition,4,gl.FLOAT,false,0,0);
 
-    var mv = lookAt( 
-        vec3(0.0, 0.0, zView), 
-        vec3(0.0, 0.0, 0.0), 
-        vec3(0.0, 1.0, 0.0) 
-        );
+    var mv = look(player_dir);
+    
     mv = mult( mv, rotateX(spinX) );
     mv = mult( mv, rotateY(spinY) );
     oldFishDirection = fishDirection;

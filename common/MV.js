@@ -482,6 +482,24 @@ function lookAt( eye, at, up )
     return result;
 }
 
+function mouseLook(key,mdelta){
+    const player_x = Math.cos(radians(mdelta))*0.2;
+    const player_z = Math.sin(radians(mdelta))*0.2;
+
+    switch(key){
+        case 'w':
+            return vec3(player_x,0,player_z);
+        case 's':
+            return vec3(-player_x,0,-player_z);
+        case 'a':
+            return vec3(player_z,0,-player_x);
+        case 'd':
+            return vec3(-player_z,0,player_x);
+        default:
+            return null;
+    }
+}
+
 //----------------------------------------------------------------------------
 //
 //  Projection Matrix Generators
