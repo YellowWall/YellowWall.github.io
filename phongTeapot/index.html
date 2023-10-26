@@ -36,11 +36,15 @@ uniform vec4 diffuseProduct;
 uniform vec4 specularProduct;
 uniform float shininess;
 varying vec3 N, L, E;
+uniform boolean PhongSwitch;
 
 void main()
 {
+    vec3 R;
     vec4 fColor;
-
+    if(PhongSwitch){
+        R = 2.0* max(dot(L,N),0.0)*N-L;
+    }
     vec3 H = normalize( normalize(L) + normalize(E) );
     vec4 ambient = ambientProduct;
 
@@ -66,6 +70,7 @@ void main()
 <script type="text/javascript" src="PhongTeapot.js"></script>
 
 <body>
+    <button>PhongSwitch</button>
 <canvas id="gl-canvas" width="600" height="600">
 Oops ... your browser doesn't support the HTML5 canvas element
 </canvas>

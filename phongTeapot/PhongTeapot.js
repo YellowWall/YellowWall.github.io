@@ -46,6 +46,7 @@ var canvas, render, gl;
 
 var points = [];
 var normals = [];
+var phongOrBlinnPhong = false;
 
 onload = function init()  {
 
