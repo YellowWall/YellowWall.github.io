@@ -5,7 +5,7 @@
 
 attribute vec4 vPosition;
 attribute vec4 vNormal;
-varying vec3 N, L, E;
+varying vec3 N, L, E, R;
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 uniform vec4 lightPosition;
@@ -21,6 +21,7 @@ void main()
 
     E =  -normalize(pos);
     N = normalize( normalMatrix*vNormal.xyz);
+    R = 2.0 * max(dot(L,N),0.0) * N-L;
 
     gl_Position = projectionMatrix * modelViewMatrix * vPosition;
 
@@ -35,23 +36,25 @@ uniform vec4 ambientProduct;
 uniform vec4 diffuseProduct;
 uniform vec4 specularProduct;
 uniform float shininess;
-varying vec3 N, L, E;
-uniform boolean PhongSwitch;
+varying vec3 N, L, E, R;
+uniform bool phongSwitch;
 
 void main()
 {
-    vec3 R;
     vec4 fColor;
-    if(PhongSwitch){
-        R = 2.0* max(dot(L,N),0.0)*N-L;
-    }
+
     vec3 H = normalize( normalize(L) + normalize(E) );
     vec4 ambient = ambientProduct;
 
     float Kd = max( dot(normalize(L), normalize(N)), 0.0 );
     vec4  diffuse = Kd*diffuseProduct;
 
-    float Ks = pow( max(dot(normalize(N), H), 0.0), shininess );
+    float Ks;
+    if(phongSwitch){
+        Ks = pow( max(dot(E,R),0.0),shininess);
+    }else{
+        Ks = pow(max(dot(normalize(N),H),0.0),shininess);
+    }
     vec4  specular = Ks * specularProduct;
 
     if( dot(normalize(L), normalize(N)) < 0.0 ) specular = vec4(0.0, 0.0, 0.0, 1.0);
@@ -70,9 +73,10 @@ void main()
 <script type="text/javascript" src="PhongTeapot.js"></script>
 
 <body>
-    <button>PhongSwitch</button>
+    
 <canvas id="gl-canvas" width="600" height="600">
 Oops ... your browser doesn't support the HTML5 canvas element
 </canvas>
+<button id="phongSwitch"><p id="phongStatus">Phong</p></button>
 </body>
 </html>

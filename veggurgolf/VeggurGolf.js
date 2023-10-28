@@ -20,6 +20,7 @@ var texCoordsArray = [];
 var texture;
 var texVegg;
 var texGolf;
+var texThak;
 
 // Breytur fyrir hreyfingu áhorfanda
 var userXPos = 0.0;
@@ -40,26 +41,91 @@ var zDist = -5.0;
 
 var proLoc;
 var mvLoc;
-
+var numWalls = 5;
 // Hnútar veggsins
 var vertices = [
-    vec4( -10.0,  0.0, 0.0, 1.0 ),
+    //hnútar vegg 1
+    vec4( -5.0,  0.0, 0.0, 1.0 ),
     vec4(  5.0,  0.0, 0.0, 1.0 ),
     vec4(  5.0,  1.0, 0.0, 1.0 ),
     vec4(  5.0,  1.0, 0.0, 1.0 ),
     vec4( -5.0,  1.0, 0.0, 1.0 ),
     vec4( -5.0,  0.0, 0.0, 1.0 ),
+    //hnútar vegg 2
+    vec4(  5.0,  0.0, 5.0, 1.0 ),
+    vec4(  5.0,  0.0, 0.0, 1.0 ),
+    vec4(  5.0,  1.0, 0.0, 1.0 ),
+    vec4(  5.0,  1.0, 0.0, 1.0 ),
+    vec4(  5.0,  1.0, 5.0, 1.0 ),
+    vec4(  5.0,  0.0, 5.0, 1.0 ),
+    //hnútar vegg 3
+    vec4(  -5.0,  0.0, 5.0, 1.0 ),
+    vec4(  -5.0,  0.0, 0.0, 1.0 ),
+    vec4(  -5.0,  1.0, 0.0, 1.0 ),
+    vec4(  -5.0,  1.0, 0.0, 1.0 ),
+    vec4(  -5.0,  1.0, 5.0, 1.0 ),
+    vec4(  -5.0,  0.0, 5.0, 1.0 ),
+    //hnútar vegg 4
+    vec4( -5.0,  0.0, 5.0, 1.0 ),
+    vec4( -0.5,  0.0, 5.0, 1.0 ),
+    vec4( -0.5,  1.0, 5.0, 1.0 ),
+    vec4( -0.5,  1.0, 5.0, 1.0 ),
+    vec4( -5.0,  1.0, 5.0, 1.0 ),
+    vec4( -5.0,  0.0, 5.0, 1.0 ),
+    //hnútar vegg 5
+    vec4(  0.5,  0.0, 5.0, 1.0 ),
+    vec4(  5.0,  0.0, 5.0, 1.0 ),
+    vec4(  5.0,  1.0, 5.0, 1.0 ),
+    vec4(  5.0,  1.0, 5.0, 1.0 ),
+    vec4(  0.5,  1.0, 5.0, 1.0 ),
+    vec4(  0.5,  0.0, 5.0, 1.0 ),
+
 // Hnútar gólfsins (strax á eftir)
     vec4( -5.0,  0.0, 10.0, 1.0 ),
     vec4(  5.0,  0.0, 10.0, 1.0 ),
     vec4(  5.0,  0.0,  0.0, 1.0 ),
     vec4(  5.0,  0.0,  0.0, 1.0 ),
     vec4( -5.0,  0.0,  0.0, 1.0 ),
-    vec4( -5.0,  0.0, 10.0, 1.0 )
+    vec4( -5.0,  0.0, 10.0, 1.0 ),
+// Hnútar Þaks
+    vec4( -5.0,  1.0, 5.0, 1.0 ),
+    vec4(  5.0,  1.0, 5.0, 1.0 ),
+    vec4(  5.0,  1.0,  0.0, 1.0 ),
+    vec4(  5.0,  1.0,  0.0, 1.0 ),
+    vec4( -5.0,  1.0,  0.0, 1.0 ),
+    vec4( -5.0,  1.0, 5.0, 1.0 )
 ];
 
 // Mynsturhnit fyrir vegg
 var texCoords = [
+    vec2(  0.0, 0.0 ),
+    vec2( 10.0, 0.0 ),
+    vec2( 10.0, 1.0 ),
+    vec2( 10.0, 1.0 ),
+    vec2(  0.0, 1.0 ),
+    vec2(  0.0, 0.0 ),
+    //veggur 2
+    vec2(  0.0, 0.0 ),
+    vec2( 10.0, 0.0 ),
+    vec2( 10.0, 1.0 ),
+    vec2( 10.0, 1.0 ),
+    vec2(  0.0, 1.0 ),
+    vec2(  0.0, 0.0 ),
+    //veggur 3
+    vec2(  0.0, 0.0 ),
+    vec2( 10.0, 0.0 ),
+    vec2( 10.0, 1.0 ),
+    vec2( 10.0, 1.0 ),
+    vec2(  0.0, 1.0 ),
+    vec2(  0.0, 0.0 ),
+    //veggur 4
+    vec2(  0.0, 0.0 ),
+    vec2( 10.0, 0.0 ),
+    vec2( 10.0, 1.0 ),
+    vec2( 10.0, 1.0 ),
+    vec2(  0.0, 1.0 ),
+    vec2(  0.0, 0.0 ),
+    //veggur 5
     vec2(  0.0, 0.0 ),
     vec2( 10.0, 0.0 ),
     vec2( 10.0, 1.0 ),
@@ -72,7 +138,15 @@ var texCoords = [
     vec2( 10.0, 10.0 ),
     vec2( 10.0, 10.0 ),
     vec2(  0.0, 10.0 ),
-    vec2(  0.0,  0.0 )
+    vec2(  0.0,  0.0 ),
+// Mynsturhnit fyrir þak
+    vec2(  0.0,  0.0 ),
+    vec2( 10.0,  0.0 ),
+    vec2( 10.0, 10.0 ),
+    vec2( 10.0, 10.0 ),
+    vec2(  0.0, 10.0 ),
+    vec2(  0.0,  0.0 ),
+
 ];
 
 
@@ -131,6 +205,16 @@ window.onload = function init() {
     gl.generateMipmap( gl.TEXTURE_2D );
     gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR );
     gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR );
+
+    var thakImage = document.getElementById("ThakImage");
+    texThak = gl.createTexture();
+    gl.bindTexture( gl.TEXTURE_2D, texThak );
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, thakImage );
+    gl.generateMipmap( gl.TEXTURE_2D );
+    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR );
+    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR );
+
     
     gl.uniform1i(gl.getUniformLocation(program, "texture"), 0);
 
@@ -164,23 +248,29 @@ window.onload = function init() {
     
     // Event listener for keyboard
      window.addEventListener("keydown", function(e){
+        var newXPos = userXPos;
+        var newZPos = userZPos;
          switch( e.keyCode ) {
             case 87:	// w
-                userXPos += userIncr * userXDir;
-                userZPos += userIncr * userZDir;;
+                newXPos += userIncr * userXDir;
+                newZPos += userIncr * userZDir;;
                 break;
             case 83:	// s
-                userXPos -= userIncr * userXDir;
-                userZPos -= userIncr * userZDir;;
+                newXPos -= userIncr * userXDir;
+                newZPos -= userIncr * userZDir;;
                 break;
             case 65:	// a
-                userXPos += userIncr * userZDir;
-                userZPos -= userIncr * userXDir;;
+                newXPos += userIncr * userZDir;
+                newZPos -= userIncr * userXDir;;
                 break;
             case 68:	// d
-                userXPos -= userIncr * userZDir;
-                userZPos += userIncr * userXDir;;
+                newXPos -= userIncr * userZDir;
+                newZPos += userIncr * userXDir;;
                 break;
+         }
+         if(!collision(newXPos,newZPos)){
+            userXPos = newXPos;
+            userZPos = newZPos;
          }
      }  );  
 
@@ -197,6 +287,37 @@ window.onload = function init() {
     render();
  
 }
+function collision(XPos, ZPos){
+    if(ZPos > 5.2){
+        return false;
+    }
+    if(ZPos > 4.8){
+        if(XPos > -0.4){
+            if(XPos > 5.2){
+                return false;
+            }
+            if(XPos > 0.4){
+                return true;
+            }
+            return false;
+        }
+        if(XPos < -5.2){
+            return false;
+        }
+        return true;
+    }
+    if(ZPos >0.2){
+        if(XPos < 4.8){
+            if(XPos > -4.8 || XPos < -5.2){
+                return false;
+            }return true;
+        }if(XPos > 5.2){
+            return false;
+        }
+        return true;
+    }
+    return true;
+}
 
 var render = function(){
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -207,12 +328,16 @@ var render = function(){
     gl.uniformMatrix4fv(mvLoc, false, flatten(mv));
 
     // Teikna vegg með mynstri
-    gl.bindTexture( gl.TEXTURE_2D, texVegg );
-    gl.drawArrays( gl.TRIANGLES, 0, numVertices );
-
+    for(var i = 0; i< numWalls; i++){
+        gl.bindTexture( gl.TEXTURE_2D, texVegg );
+        gl.drawArrays( gl.TRIANGLES, i*numVertices, numVertices );
+    }
     // Teikna gólf með mynstri
     gl.bindTexture( gl.TEXTURE_2D, texGolf );
-    gl.drawArrays( gl.TRIANGLES, numVertices, numVertices );
+    gl.drawArrays( gl.TRIANGLES, numVertices*numWalls, numVertices );
+
+    gl.bindTexture(gl.TEXTURE_2D,texThak);
+    gl.drawArrays(gl.TRIANGLES, numVertices*(numWalls+1),numVertices)
 
     requestAnimFrame(render);
 }

@@ -39,14 +39,13 @@ var materialDiffuse = vec4( 1.0, 0.8, 0.0, 1.0 );
 var materialSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
 var materialShininess = 150.0;
 
-var flag = true;
 
 var program;
 var canvas, render, gl;
 
 var points = [];
 var normals = [];
-var phongOrBlinnPhong = false;
+var phong = false;
 
 onload = function init()  {
 
@@ -115,6 +114,17 @@ onload = function init()  {
         origY = e.clientY;
         e.preventDefault();         // Disable drag and drop
     } );
+
+    this.document.getElementById("phongSwitch").addEventListener("click",function(e){
+        phong = !phong;
+        var phongStatus = document.getElementById("phongStatus");
+        gl.uniform1f(gl.getUniformLocation(program,"phongSwitch"),phong);
+        if(phong){
+            phongStatus.innerHTML = "Blinn-Phong";
+        }else{
+            phongStatus.innerHTML = "Phong";
+        }
+    })
 
     canvas.addEventListener("mouseup", function(e){
         movement = false;
