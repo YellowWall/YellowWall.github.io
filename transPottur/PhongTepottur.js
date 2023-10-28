@@ -152,7 +152,7 @@ window.onload = function init() {
      window.addEventListener("keydown", function(e){
         switch(e.key){
             case "ArrowLeft":
-                maxBright = Math.min(3,maxBright+0.1);
+                maxBright = Math.min(4,maxBright+0.1);
                 gl.uniform1f( gl.getUniformLocation(program, "maxBright"), maxBright);
                 break;
             case "ArrowRight":
