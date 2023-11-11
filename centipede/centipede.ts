@@ -51,6 +51,10 @@ function init(container){
         tail: null,
     }
     centipedes = centipede(newCent);
+    for(var i = 0; i<centipedes.meshes.length; i++){
+        scene.add(centipedes.meshes[i]);
+    }
+    makelight("ambient");
     scene.add(player);
 }
 
@@ -80,6 +84,18 @@ function track_shot(){
         }
     })
 }
+function makelight(type){
+    switch(type){
+        case "ambient":
+            const light = THREE.AmbientLight(0x404040);
+            light.position.set(0,0,0);
+            scene.add(light);
+    }
+    
+}
+function outsideBounds(pos:number,dir:number){
+
+}
 window.onload = function make(){
     init(document.body);
     
@@ -96,8 +112,13 @@ window.onload = function make(){
     document.addEventListener('keyup', (event) =>{
         keyup(event);
     } )
+    const [table,mushrooms] = gameboard(size[0],size[1],4);
+    for(var i = 0; i<mushrooms.length;i++){
+        scene.add(mushrooms[i]);
+    }
+    renderer.render(scene,perspective);
     
-    
+
 }
 
 
