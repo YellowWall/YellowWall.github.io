@@ -1,0 +1,47 @@
+<html>
+<!-- 
+<script id="vertex-shader" type="x-shader/x-vertex">
+
+attribute  vec4 vPosition;
+
+uniform mat4 projection;
+uniform mat4 modelview;
+
+void main() 
+{
+    gl_PointSize = 4.5;
+    gl_Position = projection * modelview * vPosition;
+} 
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+
+precision mediump float;
+   
+uniform vec4 fColor;
+
+void
+main()
+{
+    gl_FragColor = fColor;
+}
+</script>-->
+
+
+
+<script type="text/javascript" src="../common/webgl-utils.js"></script>
+<script type="text/javascript" src="../common/initShaders.js"></script>
+<script type="text/javascript" src="../common/MV.js"></script>
+<script type="text/javascript" src="centipede.js"></script>
+
+<body>
+    <!--
+<canvas id="gl-canvas" width="500"" height="500">
+Oops ... your browser doesn't support the HTML5 canvas element
+</canvas>-->
+<div id="gamespace"></div>
+   
+<br/>
+
+</body>
+</html>
