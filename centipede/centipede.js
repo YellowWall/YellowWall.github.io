@@ -294,7 +294,7 @@ function shootCentipede(centi, index, marker){
     console.log(mushx);
     console.log(mushy);
     mushroom.position.x = mushx;
-    mushroom.position.y = -mushy;
+    mushroom.position.y = mushy;
     mushrooms[Math.abs(mushy)][mushx] = mushroom;
     game_map[Math.abs(mushy)][mushx] = 4;
     scene.add(mushrooms[Math.abs(mushy)][mushx]);
