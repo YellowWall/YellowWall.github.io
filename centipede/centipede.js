@@ -223,11 +223,6 @@ function track_shot(){
     })
 }
 function shootCentipede(centi, index, marker){
-    const geometry = new THREE.SphereGeometry(0.15*4, 16, 16);
-                const material = new THREE.MeshBasicMaterial({
-                    color: 0xFFA733 + (0x001100*4)
-                })
-    const mushroom = new THREE.Mesh(geometry,material);
     var mushx,mushy;
     var tail = [];
     var meshes = [];
@@ -288,17 +283,21 @@ function shootCentipede(centi, index, marker){
         var new_centi = splitCentipede(centi,marker);
         new_centi.meshes.forEach((mesh)=> scene.add(mesh));
         centipedes.push(new_centi);
-        console.log(mushx);
         
 
-    }
+    }    
+    const geometry = new THREE.SphereGeometry(0.15*4, 16, 16);
+    const material = new THREE.MeshBasicMaterial({
+        color: 0xFFA733 + (0x001100*4)
+        })
+    const mushroom = new THREE.Mesh(geometry,material);
     console.log(mushx);
     console.log(mushy);
     mushroom.position.x = mushx;
     mushroom.position.y = -mushy;
     mushrooms[Math.abs(mushy)][mushx] = mushroom;
     game_map[Math.abs(mushy)][mushx] = 4;
-    scene.add(mushroom);
+    scene.add(mushrooms[Math.abs(mushy)][mushx]);
 }
 function splitCentipede(centi,index){
     var new_tail = [];
