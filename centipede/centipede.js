@@ -214,7 +214,6 @@ function track_shot(){
                                 marker = k;
                             }
                         });
-                        score_increase(10);
                         shootCentipede(centipart,j,marker);
                     }
                 })
@@ -223,6 +222,11 @@ function track_shot(){
     })
 }
 function shootCentipede(centi, index, marker){
+    if(marker==0){
+        score_increase(100);
+    }else{
+        score_increase(10);
+    }
     var mushx,mushy;
     var tail = [];
     var meshes = [];
@@ -255,30 +259,6 @@ function shootCentipede(centi, index, marker){
     }else{
         mushx = tail[marker-1].x;
         mushy = tail[marker-1].y;
-        /*
-        centi.tail = tail.slice(0,marker);
-        scene.remove(centi.meshes[marker]);
-        for(var i = marker; i<centi.length;i++){
-            scene.remove(centi.meshes[i]);
-        }
-        centi.meshes = centi.meshes.slice(0,marker);
-        centi.length = marker;
-
-        var new_tail = tail.slice(marker);
-        var new_head = new_tail.slice(new_tail.length-1,1);
-        new_tail.reverse();
-        var new_meshes = meshes.slice(marker);
-        new_meshes.reverse();
-
-        var new_centi = {
-            direction: -centi.direction,
-            length: new_tail.length +1,
-            head: new_head,
-            tail: new_tail.length? new_tail : [],
-            meshes: new_meshes,
-            up: false,
-            next_up: false
-        }*/
 
         var new_centi = splitCentipede(centi,marker);
         new_centi.meshes.forEach((mesh)=> scene.add(mesh));
