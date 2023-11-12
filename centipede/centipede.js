@@ -40,7 +40,7 @@ function init(){
     player = newPlayer(size);
     var newCent = {
         head: new THREE.Vector3(0,0,0),
-        length: 7,
+        length: 10,
         direction: 1,
         tail: null,
         up: false,
@@ -71,7 +71,7 @@ function centipede(centipede){
         centipede.tail = new Array(centipede.length-1).fill(new THREE.Vector3(0,0,0));
     }
     const meshes = new Array(centipede.length).fill(0).map(()=>{
-        return new THREE.Mesh(new THREE.SphereGeometry(0.5,16,16),new THREE.MeshBasicMaterial({color: 0xFFEB33}));
+        return new THREE.Mesh(new THREE.SphereGeometry(0.5,16,16),new THREE.MeshBasicMaterial({color: 0xFF0000}));
     });
     if(meshes.length > 0 && centipede.head != null){
         meshes[0].position.set(...centipede.head);
@@ -166,14 +166,20 @@ function track_shot(){
                             }
                         });
                         score_increase(10);
-                        splitCentipede(centipart,j,marker);
+                        shootCentipede(centipart,j,marker);
                     }
                 })
             }
         }   
     })
 }
-function splitCentipede(centi, index, marker){
+function shootCentipede(centi, index, marker){
+    const geometry = new THREE.SphereGeometry(0.15*4, 16, 16);
+                const material = new THREE.MeshBasicMaterial({
+                    color: 0xFFA733 + (0x001100*4)
+                })
+    const mushroom = new THREE.Mesh(geometry,material);
+    var mushx,mushy;
     var tail = [];
     var meshes = [];
     if(centi.tail != null){
@@ -183,18 +189,29 @@ function splitCentipede(centi, index, marker){
         meshes = centi.meshes;
     }
     if(marker === 0 || marker === centi.length -1){
-        if(tail.length > 0) {
-            scene.remove(centi.meshes[marker]);
+        if(tail && tail.length > 0) {
+            scene.remove(centi.meshes?.pop());
             if(marker == 0) {
+                mushx = centi.head.x;
+                mushy = centi.head.y;
                 centi.head = tail[0];
-                centi.tail.splice(0,1);
-            }else centi.tail.splice(marker-1,1);
+                
+            }else{
+                mushx = tail[marker-1].x;
+                mushy = tail[marker-1].y;
+            }
+            centi.tail?.pop();
             centi.length -= 1;
         }else{
+            mushx = tail[marker-1].x;
+            mushy = tail[marker-1].y;
             scene.remove(centi.meshes[i]);
             centipedes.splice(index,1);
         }
     }else{
+        mushx = tail[marker-1].x;
+        mushy = tail[marker-1].y;
+        /*
         centi.tail = tail.slice(0,marker);
         scene.remove(centi.meshes[marker]);
         for(var i = marker; i<centi.length;i++){
@@ -217,19 +234,64 @@ function splitCentipede(centi, index, marker){
             meshes: new_meshes,
             up: false,
             next_up: false
-        }
+        }*/
+
+        var new_centi = splitCentipede(centi,marker);
+        new_centi.meshes.forEach((mesh)=> scene.add(mesh));
         centipedes.push(new_centi);
+        console.log(mushx);
+        
 
     }
+    console.log(mushx);
+    console.log(mushy);
+    mushroom.position.x = mushx;
+    mushroom.position.y = -mushy;
+    mushrooms[Math.abs(mushy)][mushx] = mushroom;
+    game_map[Math.abs(mushy)][mushx] = 4;
+    scene.add(mushroom);
+}
+function splitCentipede(centi,index){
+    var new_tail = [];
+    if(centi.tail){
+        new_tail = [...centi.tail.slice(index)];
+    }
+    const new_head = new_tail.pop();
+    const new_direction = Math.abs(new_head.y - centi.head.y) % 2 === 0? -centi.direction : centi.direction;
+    var new_centi = {
+        direction: new_direction,
+        length: new_tail.length +1,
+        head: new_head,
+        tail: new_tail.length? new_tail : [],
+        up: false,
+        next_up: false
+    };
+    for(var i = index; i<centi.length; ++i){
+        scene.remove(centi.meshes?.[i]);
+    }
+    centi.tail = centi?.tail?.slice(0,index);
+    centi.meshes = centi.meshes?.slice(0, index);
+    centi.length = index;
+    const meshes = new Array(new_centi.length).fill(0).map(()=>{
+        return new THREE.Mesh(new THREE.SphereGeometry(0.5,16,16),new THREE.MeshBasicMaterial({color: 0xFF0000}));
+    });
+    if(meshes.length > 0 && new_centi.head != null){
+        meshes[0].position.set(...new_centi.head);
+        for(var i = 1; i< new_centi.length-1; i++)
+        meshes[i].position.set(...new_centi.tail[i]);
+    }
+    new_centi.meshes = meshes;
+    return new_centi;
 
+
+    
 }
 function move_centis(){
     if(Date.now() - centi_move > centi_wait){
         centipedes.forEach((centi) =>{
             if(!centi.tail) return;
-            var old_head = centi.head;
+            var old_head = new THREE.Vector3(...centi.head);
             var old = [old_head, ...centi.tail.slice(0, centi.tail.length-1)];
-            console.log(old);
             if(centi.up){
                 centi.head.y +=1;
                 centi.up = centi.head.y !== 0;
@@ -248,14 +310,15 @@ function move_centis(){
             for (var i = 0; i< old.length; ++i){
                 centi.tail[i] = old[i];
             }
-            console.log(centi.tail);
+
             if(!centi.meshes) return;
             centi.meshes.forEach((mesh,i)=>{
                 var pos;
                 if(i=== 0) pos = centi.head;
-                else pos = old[i-1];
+                else pos = old?.[i-1] ?? new THREE.Vector3(0,0,0);
                 mesh.position.x = pos.x;
                 mesh.position.y = pos.y;
+
             }) 
         })
         centi_move = Date.now();
