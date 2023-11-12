@@ -1,29 +1,34 @@
 <html>
-    <script type="importmap">
-        {
-          "imports": {
-            "three": "https://unpkg.com/three@<version>/build/three.module.js",
-            "three/addons/": "https://unpkg.com/three@<version>/examples/jsm/"
-          }
-        }
-      </script>
+
+
 <!--
-<script type="text/typescript" src="./playerdata.ts"></script>
-<script type="text/typescript" src="./centidata.ts"></script>
-<script type="text/typescript" src="./gameboard.ts"></script>
 
-<script type="text/typescript" src="./centipede.ts"></script>
 -->
-<script type="text/javascript" src="./main.js"></script>
-
+<head>
+    <meta charset="utf-8">
+    <title>My first three.js app</title>
+    <style>
+        body { margin: 0; }
+    </style>
+        <script type="importmap">
+            {
+              "imports": {
+                "three": "https://unpkg.com/three@0.158.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.158.0/examples/jsm/"
+              }
+            }
+          </script>
+        
+</head>
 <body>
-
-<canvas id="mycanvas" width="500" height="500">
-Oops ... your browser doesn't support the HTML5 canvas element
-</canvas>
-
-   
-<br/>
+    <p>Hægt er að breyta sjónarhorni með <b>V</b>, hreyfa spilara með örvatökkum og skjóta með bilstöng</p>
+    <canvas id="mycanvas" width="500" height="500">
+        Oops ... your browser doesn't support the HTML5 canvas element
+        </canvas>
+        <br>
+        <p>Score: <b id="scorecontainer"> 0</b></p>
+    <script type="module" src="./centipede.js"></script>
 
 </body>
+
 </html>

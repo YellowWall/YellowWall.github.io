@@ -13,10 +13,12 @@ export function newPlayer(size:number[]){
     return mesh;
 }
 
-export const newBullet = new Mesh(
-    new ConeGeometry(0.1,0.8,6),
-    new MeshBasicMaterial({color: 0xff0000})
-);
+export function newBullet(){
+    return  new Mesh(
+        new ConeGeometry(0.1,0.8,6),
+        new MeshBasicMaterial({color: 0xff0000})
+    );
+};
 
 export function setLimits(x1,x2,y1,y2){
     limits = [x1,x2,y1,y2];
@@ -29,7 +31,7 @@ export function keyup(event: KeyboardEvent){
     keystate[event.code] = false;
 }
 
-export function move_player(player: Mesh, speed: number, keyboard){
+export function move_player(player: Mesh, speed: number){
     var x_move = 0;
     var y_move = 0;
 
