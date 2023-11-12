@@ -1,16 +1,6 @@
 import * as THREE from "three";
 import {move_player,keyup,keydown, newPlayer, newBullet, setLimits} from "./playerdata";
-/*import { gameboard } from "./gameboard";
-import { centipede} from "./centidata";*/
-/**
- * leikjasvæði er 16x15
- * táknað af 16x15 x og y hnitum sem eru túlkuð sem heiltölur, min 0, max y = 16, max x = 15
- * centipede hlutur er táknaður sem linked listi, þarf sem að hver centipede hlutur hefur vísun bæði
- * í höfuð sitt og hala
- */
-/**
- * direction, niður 0, hægri 1, vinstri 2, upp 3 
- */
+
 
 
 var score = 0;
